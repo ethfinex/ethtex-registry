@@ -47,6 +47,12 @@ contract ERC20Interface {
   function decimals() public view returns (uint8);
 }
 
+contract ERC20BadInterface {
+  function name() public view returns (bytes32);
+  function symbol() public view returns (bytes32);
+  function decimals() public view returns (uint8);
+}
+
 contract RegistryLookup is Ownable{
 
     mapping (address => bool) public authorisedStatus;
@@ -56,7 +62,7 @@ contract RegistryLookup is Ownable{
     address[] public authorisedTokens;
 
     function addNewTokens(address[] memory _tokens) public onlyOwner {
-        for (uint i = 0; i < _tokens.length; i++) {
+        for (uint32 i = 0; i < _tokens.length; i++) {
             authorisedStatus[_tokens[i]] = true;
             authorisedTokens.push(_tokens[i]);
             emit AddNewToken(_tokens[i]);
@@ -64,7 +70,7 @@ contract RegistryLookup is Ownable{
     }
 
     function removeTokens(address[] memory _tokens) public onlyOwner {
-        for (uint i = 0; i < _tokens.length; i++) {
+        for (uint32 i = 0; i < _tokens.length; i++) {
             require(authorisedStatus[_tokens[i]] == true, "token already removed");
             authorisedStatus[_tokens[i]] = false;
             emit RemoveToken(_tokens[i]);
@@ -74,7 +80,7 @@ contract RegistryLookup is Ownable{
     function getAvailableTokens() public view returns(address[] memory tokens) {
         tokens = new address[](authorisedTokens.length);
 
-        for (uint i = 0; i < authorisedTokens.length; i++) {
+        for (uint32 i = 0; i < authorisedTokens.length; i++) {
             if (authorisedStatus[authorisedTokens[i]]) {
                 tokens[i] = authorisedTokens[i];
             } else {
@@ -119,16 +125,53 @@ contract RegistryLookup is Ownable{
       }
     }
 
+    function bytes32ToString(bytes32 x) private pure returns (string memory) {
+      bytes memory bytesString = new bytes(32);
+      uint charCount = 0;
+      for (uint j = 0; j < 32; j++) {
+        byte char = byte(bytes32(uint(x) * 2 ** (8 * j)));
+        if (char != 0) {
+          bytesString[charCount] = char;
+          charCount++;
+        }
+      }
+      bytes memory bytesStringTrimmed = new bytes(charCount);
+      for (uint32 j = 0; j < charCount; j++) {
+        bytesStringTrimmed[j] = bytesString[j];
+      }
+      return string(bytesStringTrimmed);
+    }
+
+    function getTokenName(address tokenAddress) private view returns (string memory){
+      // check if bytes32 call returns correctly
+      string memory name = bytes32ToString(ERC20BadInterface(tokenAddress).name());
+      bytes memory nameBytes = bytes(name);
+      if(nameBytes.length <= 1){
+        name = ERC20Interface(tokenAddress).name();
+      }
+      return name;
+    }
+
+    function getTokenSymbol(address tokenAddress) private view returns (string memory){
+      // check if bytes32 call returns correctly
+      string memory symbol = bytes32ToString(ERC20BadInterface(tokenAddress).symbol());
+      bytes memory symbolBytes = bytes(symbol);
+      if(symbolBytes.length <= 1){
+        symbol = ERC20Interface(tokenAddress).symbol();
+      }
+      return symbol;
+    }
+
     function getTokenData(address[] memory _tokens) public view returns (
       string[] memory names, string[] memory symbols, uint[] memory decimals
       ) {
       names = new string[](_tokens.length);
       symbols = new string[](_tokens.length);
       decimals = new uint[](_tokens.length);
-      for (uint i = 0; i < _tokens.length; i++) {
-          names[i] = ERC20Interface(_tokens[i]).name();
-          symbols[i] = ERC20Interface(_tokens[i]).symbol();
-          decimals[i] = ERC20Interface(_tokens[i]).decimals();
+      for (uint32 i = 0; i < _tokens.length; i++) {
+        names[i] = getTokenName(_tokens[i]);
+        symbols[i] = getTokenSymbol(_tokens[i]);
+        decimals[i] = ERC20Interface(_tokens[i]).decimals();
       }
     }
 

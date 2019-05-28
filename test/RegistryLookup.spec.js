@@ -1,6 +1,7 @@
 const RegistryLookup = artifacts.require("RegistryLookup");
 const ERCTest1 = artifacts.require("ERCTest1");
 const ERCTest2 = artifacts.require("ERCTest2");
+const ERC32Bytes = artifacts.require("ERC32Bytes");
 
 const Web3 = require('web3')
 const Tx = require('ethereumjs-tx')
@@ -20,7 +21,7 @@ const TOKENS_TO_ADD = [
   '0x5581959Aa90eD7f8111C68F1Fa49F3dB4a98a532',
 ]
 
-let DUMMY_ERC_ADDRESS_1, DUMMY_ERC_ADDRESS_2
+let DUMMY_ERC_ADDRESS_1, DUMMY_ERC_ADDRESS_2, DUMMY_ERC_ADDRESS_32BYTES
 
 contract("RegistryLookup", accounts => {
   before(async () => {
@@ -30,6 +31,9 @@ contract("RegistryLookup", accounts => {
     DUMMY_ERC_ADDRESS_1 = dummyErcInstance1.address
     const dummyErcInstance2 = await ERCTest2.deployed()
     DUMMY_ERC_ADDRESS_2 = dummyErcInstance2.address
+    const dummyErcInstance32bytes = await ERC32Bytes.deployed()
+    DUMMY_ERC_ADDRESS_32BYTES = dummyErcInstance32bytes.address
+    
   })
 
   it('adds new Tokens', async () => {
@@ -96,6 +100,22 @@ contract("RegistryLookup", accounts => {
     }
     expect(erc1).to.eql(expectedErc1)
     expect(erc2).to.eql(expectedErc2)
+  })
+
+  it('gets ERC20 data correctly when the token returns 32bytes var', async () => {
+    const data = await contractInstance.methods.getTokenData([DUMMY_ERC_ADDRESS_32BYTES]).call()
+    const expectedErc = {
+      symbol: "ERC32B",
+      decimals: 1,
+      name: "ERC20 with 32bytes name"
+    }
+
+    const erc = {
+      name: data.names[0],
+      symbol: data.symbols[0],
+      decimals: data.decimals[0].toNumber()
+    }
+    expect(erc).to.eql(expectedErc)
   })
 
 })

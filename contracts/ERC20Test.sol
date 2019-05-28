@@ -29,3 +29,9 @@ contract ERCTest5 {
   string public symbol = "ERC5";
   uint public decimals = 1;
 }
+
+contract ERC32Bytes {
+  bytes32 public name = "ERC20 with 32bytes name";
+  bytes32 public symbol = "ERC32B";
+  uint public decimals = 1;
+}
