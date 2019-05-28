@@ -1,0 +1,20 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "truffle test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "truffle": "^5.0.19",
+    "truffle-hdwallet-provider": "^1.0.9",
+    "web3": "^1.0.0-beta.55"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "ISC"
+}
