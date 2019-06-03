@@ -2,21 +2,22 @@ const Web3 = require('web3')
 const Tx = require('ethereumjs-tx')
 
 const contractInfo = require('./build/contracts/RegistryLookup.json')
-const contractAddress = '0x24909BaeA3d4445bB75bB9136D3747771c6445b2'
+const contractAddress = '0x58d6A90b55db69cd36dae13274e24a87845991a8'
 
 const web3 = new Web3('HTTP://127.0.0.1:7545')
 
 let contractInstance = new web3.eth.Contract(contractInfo.abi, contractAddress)
 
-const pvtKey = Buffer.from('6faf0316868c76ddf97dc02f762dbd54c45f6e43ab61f1ac4475a3abe87e5a7c', 'hex')
+const pvtKey = Buffer.from('42b680d47b043c5fba033d377e4f3ef29541e82908af052ee33b9d4cfd67e129', 'hex')
 const account = web3.eth.accounts.privateKeyToAccount('0x' + pvtKey.toString('hex'));
 
 const TOKENS_TO_ADD = [
-  '0x35700ddDa14B352B6fc86dc6306f5cAC9Bb22dFa',
-  '0xBa5b461659b949FFA00663ad93c69cF632cCE5dC',
-  '0xf4833Ccdd2F2A5ce2F7a6a45815d2AC7eC843430',
-  '0xa0275807cD71f80359511F9351F8ef7ed2D9f42f',
-  '0xF372a91432a947031c79EBf0CB46b9e46ed5Ca5c',
+  '0x73030C881460FE7cb4945ac7CC6C64888AF09916',
+  '0x1817c374e07E7138320562201297CaC29e43762d',
+  '0xE7981784B9376ADe80CF42A892BD23149Df5d78B',
+  '0xCe561c1521DE5483176cbFa23547D861379DC659',
+  '0xBDDbB4B82d7CAAa7F99e6d4D178cc554DFa9F8FA',
+  '0xdF6231b016870E4B6FFb9e1c2ddbF9B4b1ca2F3d',
 ]
 
 function sendSignedTx(functionAbi) {
