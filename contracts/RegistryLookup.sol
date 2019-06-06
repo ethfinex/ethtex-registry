@@ -45,12 +45,14 @@ contract ERC20Interface {
   function name() public view returns (string memory);
   function symbol() public view returns (string memory);
   function decimals() public view returns (uint8);
+  function balanceOf(address _owner) public view returns (uint256 balance);
 }
 
 contract ERC20BadInterface {
   function name() public view returns (bytes32);
   function symbol() public view returns (bytes32);
   function decimals() public view returns (uint8);
+  function balanceOf(address _owner) public view returns (uint256 balance);
 }
 
 contract RegistryLookup is Ownable{
@@ -162,6 +164,7 @@ contract RegistryLookup is Ownable{
       return symbol;
     }
 
+    // get name, symbol and decimals for multiple tokens
     function getTokenData(address[] memory _tokens) public view returns (
       string[] memory names, string[] memory symbols, uint[] memory decimals
       ) {
@@ -173,6 +176,15 @@ contract RegistryLookup is Ownable{
         symbols[i] = getTokenSymbol(_tokens[i]);
         decimals[i] = ERC20Interface(_tokens[i]).decimals();
       }
+    }
+
+    // get external balance of multiple tokens
+    function getExternalBalances(address trader, address[] memory assetAddresses) public view returns (uint256[] memory) {
+        uint256[] memory balances = new uint256[](assetAddresses.length);
+        for (uint i = 0; i < assetAddresses.length; i++) {
+            balances[i] = ERC20Interface(assetAddresses[i]).balanceOf(trader);
+        }
+        return balances;
     }
 
 }
