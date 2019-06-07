@@ -91,42 +91,6 @@ contract RegistryLookup is Ownable{
         }
     }
 
-    mapping (uint => uint[]) public pairs;
-    uint[] public tokensWithPairsLUT;
-
-    // Adds N pairs for a given token (by index stored on authorisedTokens)
-    function addPairs(uint _tokenIndex, uint[] memory _tokenPairsIndexes) public onlyOwner {
-      require(_tokenIndex < authorisedTokens.length, "token doesn't exist on tokenIndex ");
-      for( uint i = 0; i < _tokenPairsIndexes.length; i++ ){
-        require(_tokenPairsIndexes[i] < authorisedTokens.length, "a token doesn't exist on tokenPairsIndexes");
-        require(_tokenPairsIndexes[i] != _tokenIndex, "a token can't have a pair with itself");
-        if(pairs[_tokenIndex].length == 0) {
-          tokensWithPairsLUT.push(_tokenIndex);
-        }
-        pairs[_tokenIndex].push(_tokenPairsIndexes[i]);
-      }
-    }
-
-    function removePairs( uint _tokenIndex ) public onlyOwner {
-      delete pairs[_tokenIndex];
-    }
-
-    function getTokenIndexesWithPairs() public view returns(uint[] memory) {
-      return tokensWithPairsLUT;
-    }
-
-    function getPairsForTokenByIndex(uint _index) public view returns(uint[] memory result) {
-      result = new uint[](pairs[_index].length);
-      for( uint i = 0; i < pairs[_index].length; i++ ) {
-        if(authorisedStatus[authorisedTokens[pairs[_index][i]]] == true){
-          result[i] = pairs[_index][i];
-        } else {
-          // removed tokens will be sent as _index (better than 0, because tokens cant have a pair with itself, while 0 is a valid index)
-          result[i] = _index;
-        }
-      }
-    }
-
     function bytes32ToString(bytes32 x) private pure returns (string memory) {
       bytes memory bytesString = new bytes(32);
       uint charCount = 0;
