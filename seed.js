@@ -2,13 +2,13 @@ const Web3 = require('web3')
 const Tx = require('ethereumjs-tx')
 
 const contractInfo = require('./build/contracts/RegistryLookup.json')
-const contractAddress = '0x58d6A90b55db69cd36dae13274e24a87845991a8'
+const contractAddress = contractInfo.networks["5777"].address
 
-const web3 = new Web3('HTTP://127.0.0.1:7545')
+const web3 = new Web3('HTTP://127.0.0.1:8545')
 
 let contractInstance = new web3.eth.Contract(contractInfo.abi, contractAddress)
 
-const pvtKey = Buffer.from('42b680d47b043c5fba033d377e4f3ef29541e82908af052ee33b9d4cfd67e129', 'hex')
+const pvtKey = Buffer.from('4909ceca58bff841f06a31671b84610faafe3ab5d674cc4c4715f81fea38a47b', 'hex')
 const account = web3.eth.accounts.privateKeyToAccount('0x' + pvtKey.toString('hex'));
 
 const TOKENS_TO_ADD = [
