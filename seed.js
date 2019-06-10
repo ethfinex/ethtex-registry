@@ -29,16 +29,16 @@ const tokensDefault = [
 ]
 
 const options = commandLineArgs([
-  { name: 'provider', alias: 'p', type: String, defaultOption: defaultProvider },
-  { name: 'privatekey', alias: 'k', type: String, defaultOption: pvtKeyDefault },
-  { name: 'contract', alias: 'c', type: String, defaultOption: contractAddressDefault },
-  { name: 'token', alias: 't', type: String, multiple: true, defaultOption: tokensDefault },
+  { name: 'provider', alias: 'p', type: String, defaultValue: defaultProvider },
+  { name: 'privatekey', alias: 'k', type: String, defaultValue: pvtKeyDefault },
+  { name: 'contract', alias: 'c', type: String, defaultValue: contractAddressDefault },
+  { name: 'token', alias: 't', type: String, multiple: true, defaultValue: tokensDefault },
 ])
 
 const { provider, privatekey, contract, token } = options
 const web3 = new Web3(provider)
 
-let contractInstance = new web3.eth.Contract(contractInfo.abi, contract)
+let contractInstance = new web3.eth.Contract(registryContractInfo.abi, contract)
 
 const pvtKey = Buffer.from(privatekey, 'hex')
 const account = web3.eth.accounts.privateKeyToAccount('0x' + pvtKey.toString('hex'));
