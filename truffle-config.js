@@ -55,7 +55,12 @@ module.exports = {
     ropsten: {
       provider: () => new HDWalletProvider(pvtkey, "ropsten.infura.io/v3/c1b21d8a9ff440cc8538fcc5e5fdfe36"),
       network_id: 3
-    } 
+    },
+    docker: {
+      host: "host.docker.internal",
+      port: 8545,
+      network_id: "*"
+    }
 
     // Another network with more advanced options...
     // advanced: {

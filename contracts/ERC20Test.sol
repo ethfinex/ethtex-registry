@@ -1,4 +1,4 @@
-pragma solidity 0.5.0;
+pragma solidity >=0.5.0;
 
 
 contract SafeMath {
@@ -102,7 +102,7 @@ contract Leo is StandardToken, SafeMath {
 
 contract Tether is StandardToken, SafeMath {
   string public name = "Tether USD";
-  string public symbol = "USDt";
+  string public symbol = "USDT";
   uint public decimals = 2;
 }
 
