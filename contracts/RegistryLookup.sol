@@ -32,7 +32,7 @@ contract Ownable {
     require(isOwner());
     _;
   }
-  
+
   /**
    * @return true if `msg.sender` is the owner of the contract.
    */
@@ -62,6 +62,7 @@ contract RegistryLookup is Ownable{
     event RemoveToken(address token);
 
     address[] public authorisedTokens;
+    address public wrappedEthAddress;
 
     function addNewTokens(address[] memory _tokens) public onlyOwner {
         for (uint32 i = 0; i < _tokens.length; i++) {
@@ -89,6 +90,10 @@ contract RegistryLookup is Ownable{
                 tokens[i] = address(0);
             }
         }
+    }
+
+    function setWrappedEthAddress(address _wrappedEthAddress) public onlyOwner {
+      wrappedEthAddress = _wrappedEthAddress;
     }
 
     function bytes32ToString(bytes32 x) private pure returns (string memory) {
