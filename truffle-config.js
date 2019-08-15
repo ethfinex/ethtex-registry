@@ -1,7 +1,7 @@
 var HDWalletProvider = require("truffle-hdwallet-provider");
 
 
-var pvtkey = "845F266A5380696343ED6A8B002391C399B86546BA94BFC0626AAEF9666D7015"
+var pvtkey = "4909ceca58bff841f06a31671b84610faafe3ab5d674cc4c4715f81fea38a47b"
 
 /**
  * Use this file to configure your truffle project. It's seeded with some

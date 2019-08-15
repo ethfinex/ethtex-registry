@@ -18,8 +18,8 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Program",
-      "program": "${workspaceFolder}/something.js"
+      "name": "seed",
+      "program": "${workspaceFolder}/seed.js"
     }
   ]
 }

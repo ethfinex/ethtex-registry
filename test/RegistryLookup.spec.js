@@ -1,16 +1,16 @@
 const RegistryLookup = artifacts.require("RegistryLookup");
-const ERCTest1 = artifacts.require("ERCTest1");
-const ERCTest2 = artifacts.require("ERCTest2");
-const ERC32Bytes = artifacts.require("ERC32Bytes");
+const LeoToken = artifacts.require("Leo");
+const BatToken = artifacts.require("BAT");
+const DaiToken = artifacts.require("Dai"); // has name represented as bytes32
+const WethToken = artifacts.require("Weth");
+
+const Utils = require('../utils')
 
 const Web3 = require('web3')
-const Tx = require('ethereumjs-tx')
 
-const web3 = new Web3('HTTP://127.0.0.1:7545')
+const web3 = new Web3('HTTP://127.0.0.1:8545')
 
-let contractInstance = null
 const pvtKey = Buffer.from('6faf0316868c76ddf97dc02f762dbd54c45f6e43ab61f1ac4475a3abe87e5a7c', 'hex')
-const account = web3.eth.accounts.privateKeyToAccount('0x' + pvtKey.toString('hex'));
 
 
 const TOKENS_TO_ADD = [
@@ -21,93 +21,67 @@ const TOKENS_TO_ADD = [
   '0x5581959Aa90eD7f8111C68F1Fa49F3dB4a98a532',
 ]
 
-let DUMMY_ERC_ADDRESS_1, DUMMY_ERC_ADDRESS_2, DUMMY_ERC_ADDRESS_32BYTES
-
 contract("RegistryLookup", accounts => {
+  let contractInstance, utils
+
   before(async () => {
     let deployedInstance = await RegistryLookup.deployed();
     contractInstance = new web3.eth.Contract(deployedInstance.abi, deployedInstance.address)
-    const dummyErcInstance1 = await ERCTest1.deployed()
-    DUMMY_ERC_ADDRESS_1 = dummyErcInstance1.address
-    const dummyErcInstance2 = await ERCTest2.deployed()
-    DUMMY_ERC_ADDRESS_2 = dummyErcInstance2.address
-    const dummyErcInstance32bytes = await ERC32Bytes.deployed()
-    DUMMY_ERC_ADDRESS_32BYTES = dummyErcInstance32bytes.address
-    
+    utils = new Utils(contractInstance, web3, pvtKey)
   })
 
   it('adds new Tokens', async () => {
-    await addTokens(TOKENS_TO_ADD)
-
+    await utils.addTokens(TOKENS_TO_ADD)
     const availableTokens = await contractInstance.methods.getAvailableTokens().call()
     expect(availableTokens).to.eql(TOKENS_TO_ADD)
   })
 
-  it('adds new pairs', async () => {
-    const pairsForToken0 = [1, 2, 3, 4]
-    await addPairs(0, pairsForToken0)
-    const tokenIndexesWithPairs = await contractInstance.methods.getTokenIndexesWithPairs().call()
-    expect(tokenIndexesWithPairs.map(i => i.toNumber())).to.eql([0])
-
-    const pairsForToken4 = [1, 2]
-    await addPairs(4, pairsForToken4)
-    const tokenIndexesWithPairs2 = await contractInstance.methods.getTokenIndexesWithPairs().call()
-    expect(tokenIndexesWithPairs2.map(i => i.toNumber())).to.eql([0, 4])
-
-    const pairsForIndex0 = await contractInstance.methods.getPairsForTokenByIndex(0).call()
-    expect(pairsForIndex0.map(i => i.toNumber())).to.eql(pairsForToken0)
-    const pairsForIndex4 = await contractInstance.methods.getPairsForTokenByIndex(4).call()
-    expect(pairsForIndex4.map(i => i.toNumber())).to.eql(pairsForToken4)
-  })
-
   it('removes tokens correctly', async () => {
     //removes tokens from index 2 and 3
-    await removeTokens([TOKENS_TO_ADD[2], TOKENS_TO_ADD[3]])
+    await utils.removeTokens([TOKENS_TO_ADD[2], TOKENS_TO_ADD[3]])
 
     const availableTokens = await contractInstance.methods.getAvailableTokens().call()
     const expectedTokens = [...TOKENS_TO_ADD]
     expectedTokens[2] = "0x0000000000000000000000000000000000000000"
     expectedTokens[3] = "0x0000000000000000000000000000000000000000"
     expect(availableTokens).to.eql(expectedTokens)
-
-    const pairsForIndex0 = await contractInstance.methods.getPairsForTokenByIndex(0).call()
-    expect(pairsForIndex0.map(i => i.toNumber())).to.eql([1, 0, 0, 4])
-    const pairsForIndex4 = await contractInstance.methods.getPairsForTokenByIndex(4).call()
-    expect(pairsForIndex4.map(i => i.toNumber())).to.eql([1, 4])
   })
 
   it('gets ERC20 data correctly', async () => {
-    const data = await contractInstance.methods.getTokenData([DUMMY_ERC_ADDRESS_1, DUMMY_ERC_ADDRESS_2]).call()
-    const expectedErc1 = {
-      symbol: "ERC1",
-      decimals: 10,
-      name: "The First ERC20 Test Token"
-    }
-    const expectedErc2 = {
-      symbol: "ERC2",
+    const leoTokenInstance = await LeoToken.deployed()
+    const batTokenInstance = await BatToken.deployed()
+    const data = await contractInstance.methods.getTokenData([leoTokenInstance.address, batTokenInstance.address]).call()
+    const expectedLeoToken = {
+      symbol: "LEO",
       decimals: 20,
-      name: "The Second ERC20 Test Token"
+      name: "Bitfinex LEO Token"
     }
-    const erc1 = {
+    const expectedBatToken = {
+      symbol: "BAT",
+      decimals: 3,
+      name: "Basic Attention Token"
+    }
+    const leoToken = {
       name: data.names[0],
       symbol: data.symbols[0],
       decimals: data.decimals[0].toNumber()
     }
-    const erc2 = {
+    const batToken = {
       name: data.names[1],
       symbol: data.symbols[1],
       decimals: data.decimals[1].toNumber()
     }
-    expect(erc1).to.eql(expectedErc1)
-    expect(erc2).to.eql(expectedErc2)
+    expect(leoToken).to.eql(expectedLeoToken)
+    expect(batToken).to.eql(expectedBatToken)
   })
 
   it('gets ERC20 data correctly when the token returns 32bytes var', async () => {
-    const data = await contractInstance.methods.getTokenData([DUMMY_ERC_ADDRESS_32BYTES]).call()
+    const daiTokenInstance = await DaiToken.deployed()
+    const data = await contractInstance.methods.getTokenData([daiTokenInstance.address]).call()
     const expectedErc = {
-      symbol: "ERC32B",
+      symbol: "DAI",
       decimals: 1,
-      name: "ERC20 with 32bytes name"
+      name: "Dai Stablecoin"
     }
 
     const erc = {
@@ -118,68 +92,11 @@ contract("RegistryLookup", accounts => {
     expect(erc).to.eql(expectedErc)
   })
 
-})
-
-// -----------------------------------
-
-
-function sendSignedTx(functionAbi) {
-  return new Promise(async (resolve, reject) => {
-    const nonce = await web3.eth.getTransactionCount(account.address)
-
-    const txParams = {
-      gasPrice: 100000,
-      gasLimit: 3000000,
-      to: contractInstance.address,
-      data: functionAbi,
-      from: account.address,
-      nonce: '0x' + nonce.toString(16)
-    };
-
-
-    const tx = new Tx(txParams);
-    tx.sign(pvtKey); // Transaction Signing here
-
-    const serializedTx = tx.serialize();
-
-    web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
-      .once('transactionHash', hash => console.log(`Hash: ${hash}`))
-      .once('receipt', receipt => console.log(`Receipt: ${receipt}`))
-      .on('error', error => {
-        console.error("Error: ", error)
-        reject()
-      })
-      .on('confirmation', (confNumber, receipt) => {
-        console.log('Confirmation: ', confNumber, receipt)
-        resolve();
-      })
+  it('sets the value of wrappedEthAddress correctly', async () => {
+    const wethTokenInstance = await WethToken.deployed()
+    await utils.setWrappedEthAddress(wethTokenInstance.address)
+    const address = await contractInstance.methods.wrappedEthAddress().call()
+    expect(address).to.eql(wethTokenInstance.address)
   })
-}
 
-
-async function addTokens(tokens) {
-  try {
-    const functionAbi = await contractInstance.methods.addNewTokens(tokens).encodeABI()
-    await sendSignedTx(functionAbi)
-  } catch (e) {
-    console.error(e)
-  }
-}
-
-async function addPairs(tokenIndex, pairsIndexes) {
-  try {
-    const functionAbi = await contractInstance.methods.addPairs(tokenIndex, pairsIndexes).encodeABI()
-    await sendSignedTx(functionAbi)
-  } catch (e) {
-    console.error(e)
-  }
-}
-
-async function removeTokens(tokens) {
-  try {
-    const functionAbi = await contractInstance.methods.removeTokens(tokens).encodeABI()
-    await sendSignedTx(functionAbi)
-  } catch (e) {
-    console.error(e)
-  }
-}
+})
