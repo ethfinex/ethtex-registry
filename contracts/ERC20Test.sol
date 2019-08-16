@@ -130,6 +130,7 @@ contract Golem is StandardToken, SafeMath {
   uint public decimals = 1;
 }
 
+// bytes32 name and symbol for testing purposes
 contract Dai is StandardToken, SafeMath {
   bytes32 public name = "Dai Stablecoin";
   bytes32 public symbol = "DAI";

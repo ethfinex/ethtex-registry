@@ -32,7 +32,7 @@ contract Ownable {
     require(isOwner());
     _;
   }
-  
+
   /**
    * @return true if `msg.sender` is the owner of the contract.
    */
