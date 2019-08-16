@@ -92,11 +92,4 @@ contract("RegistryLookup", accounts => {
     expect(erc).to.eql(expectedErc)
   })
 
-  it('sets the value of wrappedEthAddress correctly', async () => {
-    const wethTokenInstance = await WethToken.deployed()
-    await utils.setWrappedEthAddress(wethTokenInstance.address)
-    const address = await contractInstance.methods.wrappedEthAddress().call()
-    expect(address).to.eql(wethTokenInstance.address)
-  })
-
 })

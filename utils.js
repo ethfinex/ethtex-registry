@@ -18,11 +18,6 @@ class Utils {
     await this.sendSignedTx(functionAbi)
   }
 
-  async setWrappedEthAddress(address) {
-    const functionAbi = await this.contractInstance.methods.setWrappedEthAddress(address).encodeABI()
-    await this.sendSignedTx(functionAbi)
-  }
-
   sendSignedTx(functionAbi) {
     return new Promise(async (resolve, reject) => {
       const nonce = await this.web3.eth.getTransactionCount(this.account.address)

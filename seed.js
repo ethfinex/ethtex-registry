@@ -11,7 +11,6 @@ const golemContractInfo = require('./build/contracts/Golem.json')
 const leoContractInfo = require('./build/contracts/Leo.json')
 const omiseGoContractInfo = require('./build/contracts/OmiseGo.json')
 const tetherContractInfo = require('./build/contracts/Tether.json')
-const wEthContractInfo = require('./build/contracts/WEth.json')
 const zeroXContractInfo = require('./build/contracts/ZeroX.json')
 const wethContractInfo = require('./build/contracts/Weth.json')
 
@@ -26,8 +25,8 @@ const tokensDefault = [
   _get(leoContractInfo.networks[NETWORK_ID], 'address', ''),
   _get(omiseGoContractInfo.networks[NETWORK_ID], 'address', ''),
   _get(tetherContractInfo.networks[NETWORK_ID], 'address', ''),
-  _get(wEthContractInfo.networks[NETWORK_ID], 'address', ''),
   _get(zeroXContractInfo.networks[NETWORK_ID], 'address', ''),
+  _get(wethContractInfo.networks[NETWORK_ID], 'address', ''),
 ]
 const defaultWethAddress = _get(wethContractInfo.networks[NETWORK_ID], 'address', '')
 
@@ -36,10 +35,9 @@ const options = commandLineArgs([
   { name: 'privatekey', alias: 'k', type: String, defaultValue: pvtKeyDefault },
   { name: 'contract', alias: 'c', type: String, defaultValue: contractAddressDefault },
   { name: 'token', alias: 't', type: String, multiple: true, defaultValue: tokensDefault },
-  { name: 'wethAddress', alias: 'w', type: String, defaultValue: defaultWethAddress }
 ])
 
-const { provider, privatekey, contract, token, wethAddress } = options
+const { provider, privatekey, contract, token } = options
 const web3 = new Web3(provider)
 
 let contractInstance = new web3.eth.Contract(registryContractInfo.abi, contract)
@@ -50,8 +48,6 @@ const utils = new Utils(contractInstance, web3, pvtKey)
 async function seed() {
   try {
     await utils.addTokens(token)
-    await utils.setWrappedEthAddress(wethAddress)
-
     // web3 bug keeps the process running ( calling currentProvider.disconnect() doesn't end the connection)
     // https://github.com/ethereum/web3.js/issues/2882
     web3.currentProvider.disconnect()
