@@ -2,7 +2,6 @@ const RegistryLookup = artifacts.require("RegistryLookup");
 const LeoToken = artifacts.require("Leo");
 const BatToken = artifacts.require("BAT");
 const DaiToken = artifacts.require("Dai"); // has name represented as bytes32
-const WethToken = artifacts.require("Weth");
 
 const Utils = require('../utils')
 

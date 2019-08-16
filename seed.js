@@ -28,7 +28,6 @@ const tokensDefault = [
   _get(zeroXContractInfo.networks[NETWORK_ID], 'address', ''),
   _get(wethContractInfo.networks[NETWORK_ID], 'address', ''),
 ]
-const defaultWethAddress = _get(wethContractInfo.networks[NETWORK_ID], 'address', '')
 
 const options = commandLineArgs([
   { name: 'provider', alias: 'p', type: String, defaultValue: defaultProvider },
