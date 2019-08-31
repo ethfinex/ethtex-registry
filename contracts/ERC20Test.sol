@@ -87,13 +87,6 @@ contract StandardToken is Token {
     mapping (address => mapping (address => uint256)) allowed;
 }
 
-
-contract WEth is StandardToken, SafeMath {
-  string public name = "Wrapped Ether";
-  string public symbol = "WETH";
-  uint public decimals = 20;
-}
-
 contract Leo is StandardToken, SafeMath {
   string public name = "Bitfinex LEO Token";
   string public symbol = "LEO";
