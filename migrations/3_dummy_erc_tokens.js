@@ -1,4 +1,4 @@
-const WEth = artifacts.require("WEth");
+const Weth = artifacts.require("Weth");
 const Tether = artifacts.require("Tether");
 const Leo = artifacts.require("Leo");
 const OmiseGo = artifacts.require("OmiseGo");
@@ -8,7 +8,7 @@ const Golem = artifacts.require("Golem");
 const Dai = artifacts.require("Dai");
 
 module.exports = function (deployer) {
-  deployer.deploy(WEth)
+  deployer.deploy(Weth)
   deployer.deploy(Tether)
   deployer.deploy(Leo)
   deployer.deploy(Tether)
