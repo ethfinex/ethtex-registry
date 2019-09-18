@@ -6,13 +6,12 @@
   "directories": {
     "test": "truffle test"
   },
-  "dependencies": {},
   "devDependencies": {
     "command-line-args": "^5.1.1",
     "lodash": "^4.17.11",
     "truffle": "^5.0.19",
-    "truffle-hdwallet-provider": "^1.0.9",
-    "web3": "^1.0.0-beta.55"
+    "web3": "^1.2.1",
+    "@truffle/hdwallet-provider": "^1.0.18"
   },
   "scripts": {
     "test": "mocha"
