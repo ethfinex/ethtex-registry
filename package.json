@@ -17,5 +17,8 @@
     "test": "mocha"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "ethereumjs-tx": "^2.1.1"
+  }
 }
