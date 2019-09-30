@@ -9,8 +9,9 @@ class Utils {
   }
 
   async addTokens(tokens) {
-    const functionAbi = await this.contractInstance.methods.addNewTokens(tokens).encodeABI()
-    await this.sendSignedTx(functionAbi)
+    for (let token of tokens) {
+      await this.contractInstance.methods.addNewTokens([token]).send({from: this.account.address})
+    }
   }
 
   async removeTokens(tokens) {
