@@ -47,10 +47,7 @@ const utils = new Utils(contractInstance, web3, pvtKey)
 async function seed() {
   try {
     await utils.addTokens(token)
-    // web3 bug keeps the process running ( calling currentProvider.disconnect() doesn't end the connection)
-    // https://github.com/ethereum/web3.js/issues/2882
-    web3.currentProvider.disconnect()
-    console.log('\nSeed successful! \nYou can safely terminate this process.');
+    process.exit()
   } catch (e) {
     console.error(e)
   }

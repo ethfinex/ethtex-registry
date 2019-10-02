@@ -1,4 +1,4 @@
-const Tx = require('ethereumjs-tx')
+const Tx = require('ethereumjs-tx').Transaction
 
 class Utils {
   constructor(contractInstance, web3, pvtKey) {
