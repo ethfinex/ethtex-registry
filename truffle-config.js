@@ -1,7 +1,6 @@
 var HDWalletProvider = require("@truffle/hdwallet-provider");
 
 var pvtkey = "4909ceca58bff841f06a31671b84610faafe3ab5d674cc4c4715f81fea38a47b"
-const devWalletProvider = new HDWalletProvider(pvtkey, "http://localhost:8545", 0, 1); //start at address_index 0 and load both addresses
 
 /**
  * Use this file to configure your truffle project. It's seeded with some
@@ -52,7 +51,7 @@ module.exports = {
      port: 8545,            // Standard Ethereum port (default: none)
      network_id: "*",       // Any network (default: none)
      from: "0x272f252Af67aEbDF52794A50F47Af8d18cd6D3Ce",
-     provider: devWalletProvider,
+     provider: () => new HDWalletProvider(pvtkey, "http://127.0.0.1:8545", 0, 1),
     },
     ropsten: {
       provider: () => new HDWalletProvider(pvtkey, "ropsten.infura.io/v3/c1b21d8a9ff440cc8538fcc5e5fdfe36"),
@@ -61,7 +60,9 @@ module.exports = {
     docker: {
       host: "host.docker.internal",
       port: 8545,
-      network_id: "*"
+      network_id: "*",
+      from: "0x272f252Af67aEbDF52794A50F47Af8d18cd6D3Ce",
+      provider: () => new HDWalletProvider(pvtkey, "http://host.docker.internal:8545", 0, 1),
     }
 
     // Another network with more advanced options...
