@@ -1,6 +1,6 @@
 # ethtex-registry
 
-Token registry smart contract for D-Arch platform.
+Token registry smart contract for use by an exchange platform with on-chain settlement, in-order to allow token maps to be queried on-chain with minimal trust in any exchange operator. The implementation is write only.
 
 Main contract can be found on `contracts/RegistryLookup.sol`
 
