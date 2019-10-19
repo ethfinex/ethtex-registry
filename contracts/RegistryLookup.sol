@@ -39,6 +39,24 @@ contract Ownable {
   function isOwner() public view returns(bool) {
     return msg.sender == _owner;
   }
+  
+  /**
+   * @dev Transfers ownership of the contract to a new account (`newOwner`).
+   * Can only be called by the current owner.
+   */
+  function transferOwnership(address newOwner) public onlyOwner {
+      _transferOwnership(newOwner);
+  }
+
+  /**
+   * @dev Transfers ownership of the contract to a new account (`newOwner`).
+   */
+  function _transferOwnership(address newOwner) internal {
+      require(newOwner != address(0), "Ownable: new owner is the zero address");
+      emit OwnershipTransferred(_owner, newOwner);
+      _owner = newOwner;
+  }
+
 }
 
 contract ERC20Interface {
